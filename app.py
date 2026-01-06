@@ -3,7 +3,7 @@ import pandas as pd
 
 # Page Config
 st.set_page_config(
-    page_title="被動收入模擬器",
+    page_title="被動收入模擬器 v3.0",
     page_icon="💰",
     layout="wide"
 )
@@ -28,7 +28,7 @@ st.markdown("""
 # --------------------
 # 1. Sidebar - Configuration
 # --------------------
-st.sidebar.header("⚙️ 參數設定")
+st.sidebar.header("⚙️ 參數設定 (v3.0 中文版)")
 
 # Inputs
 total_principal = st.sidebar.number_input(
@@ -92,7 +92,7 @@ progress_clamped = min(max(progress, 0.0), 1.0) # Clamp between 0 and 1 for prog
 # --------------------
 # 3. Main Dashboard
 # --------------------
-st.title("💸 被動收入戰情室")
+st.title("💸 被動收入戰情室 (v3.0)")
 st.markdown(f"**目標:** 達成每月 **${target_monthly_income:,.0f}** 被動收入")
 
 # Metrics Row
