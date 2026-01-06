@@ -3,7 +3,7 @@ import pandas as pd
 
 # Page Config
 st.set_page_config(
-    page_title="Passive Income Simulator",
+    page_title="被動收入模擬器",
     page_icon="💰",
     layout="wide"
 )
@@ -28,11 +28,11 @@ st.markdown("""
 # --------------------
 # 1. Sidebar - Configuration
 # --------------------
-st.sidebar.header("⚙️ Configuration (參數設定)")
+st.sidebar.header("⚙️ 參數設定")
 
 # Inputs
 total_principal = st.sidebar.number_input(
-    "目前總本金 (Total Principal)",
+    "目前總本金 (TWD)",
     min_value=0,
     value=1000000,
     step=10000,
@@ -40,7 +40,7 @@ total_principal = st.sidebar.number_input(
 )
 
 avg_yield = st.sidebar.number_input(
-    "平均年化殖利率 (Average Yield %)",
+    "平均年化殖利率 (%)",
     min_value=0.0,
     max_value=100.0,
     value=5.0,
@@ -49,7 +49,7 @@ avg_yield = st.sidebar.number_input(
 )
 
 target_monthly_income = st.sidebar.number_input(
-    "目標月被動收入 (Target Monthly Income)",
+    "目標月被動收入 (TWD)",
     min_value=0,
     value=50000,
     step=1000,
@@ -57,7 +57,7 @@ target_monthly_income = st.sidebar.number_input(
 )
 
 st.sidebar.markdown("---")
-st.sidebar.subheader("🚀 Special Assets (特殊資產)")
+st.sidebar.subheader("🚀 特殊資產設定")
 
 # Special Asset Logic
 enable_medical_reservoir = st.sidebar.checkbox("啟用 150w 醫療險大水庫 🏥")
@@ -79,12 +79,6 @@ yield_income_monthly = (effective_capital * (avg_yield / 100)) / 12
 # Part B: Fixed Income (Medical Reservoir)
 medical_income_monthly = 0
 if enable_medical_reservoir:
-    # Logic: "Enable 150w Medical Insurance Reservoir" -> Fixed 10k income (as per req, maybe this 150w is separate from principal or just yields 10k?)
-    # Requirement: "untick: fixed add 150w principal... set estimated monthly dividend (e.g. 10,000)"
-    # A bit ambiguous if 150w is added to principal AND yields 10k separate, or 150w just gives 10k.
-    # Requirement says: "untick... fixed add 150w principal, and set its estimated monthly dividend (e.g., 10,000)."
-    # Interpreting as: 150w is a separate bucket that provides fixed 10k/month.
-    # If it was added to "effective_capital", it would use "avg_yield". Since it has a specific 10k return, I'll treat it as fixed income.
     medical_income_monthly = 10000
 
 # Total Passive Income
@@ -98,63 +92,56 @@ progress_clamped = min(max(progress, 0.0), 1.0) # Clamp between 0 and 1 for prog
 # --------------------
 # 3. Main Dashboard
 # --------------------
-st.title("💸 Passive Income Command Center")
-st.markdown(f"**Goal:** Reach **${target_monthly_income:,.0f}** / month")
+st.title("💸 被動收入戰情室")
+st.markdown(f"**目標:** 達成每月 **${target_monthly_income:,.0f}** 被動收入")
 
 # Metrics Row
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.metric(label="📊 Current Monthly Income", value=f"${current_monthly_income:,.0f}")
+    st.metric(label="📊 目前月被動收入", value=f"${current_monthly_income:,.0f}")
 
 with col2:
-    st.metric(label="🎯 Target Gap", value=f"${gap:,.0f}", delta=f"-{gap:,.0f}" if gap > 0 else "Goal Reached!", delta_color="inverse")
+    st.metric(label="🎯 距離目標差距", value=f"${gap:,.0f}", delta=f"-{gap:,.0f}" if gap > 0 else "目標達成！", delta_color="inverse")
 
 with col3:
-    st.metric(label="💰 Effective Capital", value=f"${effective_capital + (1500000 if enable_medical_reservoir else 0):,.0f}") 
-    # Note: Adding 150w to display for total wealth view, even if yield is calculated differently.
+    st.metric(label="💰 有效總資產", value=f"${effective_capital + (1500000 if enable_medical_reservoir else 0):,.0f}") 
+    # Note: Adding 150w to display for total wealth view
 
 st.markdown("---")
 
 # Progress Bar
-st.subheader("🚀 Progress Tracker")
-st.write(f"Current Achievement: **{progress*100:.1f}%**")
+st.subheader("🚀 進度追蹤")
+st.write(f"目前達成率: **{progress*100:.1f}%**")
 
-# Color Logic for text (Progress bar color in Streamlit is standard, but we can hack it or just use standard)
-# Native st.progress doesn't support color change dynamically based on value easily without custom HTML, 
-# but we requested "Native Streamlit Components". 
-# So we stick to standard st.progress but maybe add an emoji indicator.
-
-bar_color = "red"
+# Color Logic for text
+bar_color_emoji = "🔴 繼續加油！"
 if progress >= 1.0:
-    bar_color_emoji = "🟢 Perfect!"
+    bar_color_emoji = "🟢 太棒了！目標達成！"
 elif progress >= 0.5:
-    bar_color_emoji = "🟡 Good Start!"
-else:
-    bar_color_emoji = "🔴 Keep Going!"
+    bar_color_emoji = "🟡 好的開始！已經過半了！"
 
 st.progress(progress_clamped)
-st.caption(f"Status: {bar_color_emoji}")
+st.caption(f"狀態: {bar_color_emoji}")
 
 # Chart
 st.markdown("---")
-st.subheader("📈 Visual Comparison")
+st.subheader("📈 視覺化比較")
 
 chart_data = pd.DataFrame({
-    'Category': ['Current Income', 'Target Income'],
-    'Amount': [current_monthly_income, target_monthly_income]
+    '類別': ['目前收入', '目標收入'],
+    '金額': [current_monthly_income, target_monthly_income]
 })
 
 # Simple Bar Chart
-st.bar_chart(chart_data.set_index('Category'))
+st.bar_chart(chart_data.set_index('類別'))
 
 # Footer / Debug info
-with st.expander("ℹ️ Simulation Details"):
-    st.write("Calculation Breakdown:")
-    st.write(f"- Yield Income: ${yield_income_monthly:,.2f} (from ${effective_capital:,.0f} @ {avg_yield}%)")
-    st.write(f"- Fixed/Medical Income: ${medical_income_monthly:,.2f}")
+with st.expander("ℹ️ 模擬詳情"):
+    st.write("計算細節:")
+    st.write(f"- 殖利率收入: ${yield_income_monthly:,.0f} (來自 ${effective_capital:,.0f} @ {avg_yield}%)")
+    st.write(f"- 醫療險/固定配息: ${medical_income_monthly:,.0f}")
     if simulate_compensation:
-        st.info("✅ Simulating 300w compensation injection.")
+        st.info("✅ 已模擬投入 300w 賠償金。")
     if enable_medical_reservoir:
-        st.info("✅ 150w Medical Reservoir active (Fixed $10k/mo).")
-
+        st.info("✅ 已啟用 150w 醫療險大水庫 (固定月收 $10k)。")
