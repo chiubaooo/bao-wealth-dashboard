@@ -1,6 +1,7 @@
-# 💰 被動收入戰情室 (Passive Income Dashboard)
+# 💰 被動收入戰情室 (Passive Income Dashboard) - v2.0 (全中文版)
 
 這是一個基於 Streamlit 的個人財務監控面板，協助使用者追蹤被動收入目標。
+(目前版本：v2.0 繁體中文)
 
 ## 功能特色
 
